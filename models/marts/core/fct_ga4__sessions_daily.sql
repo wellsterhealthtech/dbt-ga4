@@ -1,4 +1,4 @@
-{% if var('static_incremental_days', false ) %}
+{% if var('static_incremental_days', false) is number ) %}
     {% set partitions_to_replace = ['current_date'] %}
     {% for i in range(var('static_incremental_days')) %}
         {% set partitions_to_replace = partitions_to_replace.append('date_sub(current_date, interval ' + (i+1)|string + ' day)') %}
@@ -47,7 +47,7 @@ with session_metrics as (
     from {{ref('stg_ga4__events')}}
     where session_key is not null
     {% if is_incremental() %}
-        {% if var('static_incremental_days', false ) %}
+        {% if var('static_incremental_days', false) is number ) %}
             and event_date_dt in ({{ partitions_to_replace | join(',') }})
         {% else %}
             and event_date_dt >= _dbt_max_partition
@@ -63,7 +63,7 @@ with session_metrics as (
     select * from {{ref('stg_ga4__session_conversions_daily')}}
     where 1=1
     {% if is_incremental() %}
-        {% if var('static_incremental_days', false ) %}
+        {% if var('static_incremental_days', false) is number ) %}
             and session_partition_date in ({{ partitions_to_replace | join(',') }})
         {% else %}
             and session_partition_date >= _dbt_max_partition

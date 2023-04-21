@@ -1,4 +1,4 @@
-{% if var('static_incremental_days', false ) %}
+{% if var('static_incremental_days', false) is number ) %}
     {% set partitions_to_replace = ['current_date'] %}
     {% for i in range(var('static_incremental_days')) %}
         {% set partitions_to_replace = partitions_to_replace.append('date_sub(current_date, interval ' + (i+1)|string + ' day)') %}
@@ -48,7 +48,7 @@ with session_events as (
     and event_name != 'session_start'
     and event_name != 'first_visit'
     {% if is_incremental() %}
-        {% if var('static_incremental_days', false ) %}
+        {% if var('static_incremental_days', false) is number ) %}
             and event_date_dt in ({{ partitions_to_replace | join(',') }})
         {% else %}
             and event_date_dt >= _dbt_max_partition
