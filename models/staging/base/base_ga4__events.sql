@@ -1,4 +1,4 @@
-{% if var('static_incremental_days', false) is number ) %}
+{% if var('static_incremental_days', false) is number %}
     {% set partitions_to_replace = ['current_date'] %}
     {% for i in range(var('static_incremental_days')) %}
         {% set partitions_to_replace = partitions_to_replace.append('date_sub(current_date, interval ' + (i+1)|string + ' day)') %}
@@ -43,7 +43,7 @@ with source as (
     {% endif %}
     {% if is_incremental() %}
 
-        {% if var('static_incremental_days', false) is number ) %}
+        {% if var('static_incremental_days', false) is number %}
             and parse_date('%Y%m%d', left(_TABLE_SUFFIX, 8)) in ({{ partitions_to_replace | join(',') }})
         {% else %}
             -- Incrementally add new events. Filters on _TABLE_SUFFIX using the max event_date_dt value found in {{this}}

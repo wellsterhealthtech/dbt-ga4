@@ -1,4 +1,4 @@
-{% if var('static_incremental_days', false) is number ) %}
+{% if var('static_incremental_days', false) is number %}
     {% set partitions_to_replace = ['current_date'] %}
     {% for i in range(var('static_incremental_days')) %}
         {% set partitions_to_replace = partitions_to_replace.append('date_sub(current_date, interval ' + (i+1)|string + ' day)') %}
@@ -74,7 +74,7 @@ with event_dimensions as
     where event_name != 'first_visit' 
     and event_name != 'session_start'
     {% if is_incremental() %}
-        {% if var('static_incremental_days', false) is number ) %}
+        {% if var('static_incremental_days', false) is number %}
             and event_date_dt in ({{ partitions_to_replace | join(',') }})
         {% else %}
             and event_date_dt >= _dbt_max_partition
@@ -94,7 +94,7 @@ with event_dimensions as
     from {{ref('stg_ga4__sessions_traffic_sources_daily')}}
     where 1=1
     {% if is_incremental() %}
-        {% if var('static_incremental_days', false) is number ) %}
+        {% if var('static_incremental_days', false) is number %}
             and session_partition_date in ({{ partitions_to_replace | join(',') }})
         {% else %}
             and session_partition_date >= _dbt_max_partition
@@ -108,7 +108,7 @@ with event_dimensions as
     from {{ref('stg_ga4__derived_session_properties_daily')}}
     where 1=1
     {% if is_incremental() %}
-        {% if var('static_incremental_days', false) is number ) %}
+        {% if var('static_incremental_days', false) is number %}
             and session_partition_date in ({{ partitions_to_replace | join(',') }})
         {% else %}
             and session_partition_date >= _dbt_max_partition

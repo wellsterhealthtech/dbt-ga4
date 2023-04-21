@@ -1,4 +1,4 @@
-{% if var('static_incremental_days', false) is number ) %}
+{% if var('static_incremental_days', false) is number %}
     {% set partitions_to_replace = ['current_date'] %}
     {% for i in range(var('static_incremental_days')) %}
         {% set partitions_to_replace = partitions_to_replace.append('date_sub(current_date, interval ' + (i+1)|string + ' day)') %}
@@ -45,7 +45,7 @@ with event_counts as (
     from {{ref('stg_ga4__events')}}
     where 1=1
     {% if is_incremental() %}
-        {% if var('static_incremental_days', false) is number ) %}
+        {% if var('static_incremental_days', false) is number %}
             and event_date_dt in ({{ partitions_to_replace | join(',') }})
         {% else %}
             and event_date_dt >= _dbt_max_partition
