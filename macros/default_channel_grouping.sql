@@ -14,8 +14,8 @@ case
     and ({{medium}} = '(none)' or {{medium}} = '(not set)')
     then 'Direct'
 
-  when REGEXP_CONTAINS({{source}}, r"^(facebook|instagram|pinterest|reddit|twitter|linkedin)") = true
-    and REGEXP_CONTAINS({{medium}}, r"^(cpc|ppc|paid)") = true
+  when {{source_category}} = 'SOURCE_CATEGORY_SOCIAL' = true
+    and REGEXP_CONTAINS({{medium}}, r"^(.*cp.*|ppc|retargeting|paid.*)") = true
     then 'Paid Social'
   when REGEXP_CONTAINS({{source}}, r"^(facebook|instagram|pinterest|reddit|twitter|linkedin)") = true
     or REGEXP_CONTAINS({{medium}}, r"^(social|social-network|social-media|sm|social network|social media)") = true
@@ -26,17 +26,17 @@ case
     then 'Email'
   when REGEXP_CONTAINS({{medium}}, r"affiliate|affiliates") = true
     then 'Affiliates'
-  when {{source_category}} = 'SOURCE_CATEGORY_SHOPPING' and REGEXP_CONTAINS({{medium}},r"^(.*cp.*|ppc|paid.*)$")
+  when {{source_category}} = 'SOURCE_CATEGORY_SHOPPING' and REGEXP_CONTAINS({{medium}},r"^(.*cp.*|ppc|retargeting|paid.*)$")
     then 'Paid Shopping'
-  when ({{source_category}} = 'SOURCE_CATEGORY_VIDEO' AND REGEXP_CONTAINS({{medium}},r"^(.*cp.*|ppc|paid.*)$"))
+  when ({{source_category}} = 'SOURCE_CATEGORY_VIDEO' AND REGEXP_CONTAINS({{medium}},r"^(.*cp.*|ppc|retargeting|paid.*)$"))
     or {{source}} = 'dv360_video'
     then 'Paid Video'
-  when REGEXP_CONTAINS({{medium}}, r"^(display|cpm|banner)$")
+  when REGEXP_CONTAINS({{medium}}, r"^(display|cpm|banner|expandable|interstirtial)$")
     or {{source}} = 'dv360_display'
     then 'Display'
-  when REGEXP_CONTAINS({{medium}}, r"^(cpc|ppc|paidsearch)$")
+  when {{source_category}} = 'SOURCE_CATEGORY_SEARCH' and REGEXP_CONTAINS({{medium}}, r"^(.*cp.*|ppc|retargeting|paid.*)$")
     then 'Paid Search'
-  when REGEXP_CONTAINS({{medium}}, r"^(cpv|cpa|cpp|content-text)$")
+  when REGEXP_CONTAINS({{medium}}, r"^(.*cp.*|ppc|retargeting|paid.*)$")
     then 'Other Advertising'
   when {{medium}} = 'organic' or {{source_category}} = 'SOURCE_CATEGORY_SEARCH'
     then 'Organic Search'
@@ -44,11 +44,13 @@ case
     then 'Organic Video'
   when {{source_category}} = 'SOURCE_CATEGORY_SHOPPING'
     then 'Organic Shopping'
-  when {{medium}} = 'referral'
+  when REGEXP_CONTAINS({{medium}}, r"^(referral|app|link)$")
+  {{medium}} =  r"^(referral|app|link)"
     then 'Referral'
   when {{medium}} = 'audio'
     then 'Audio'
   when {{medium}} = 'sms'
+    or {{source}} = 'sms'
     then 'SMS'
   when REGEXP_CONTAINS({{medium}}, r"(mobile|notification|push$)") or {{source}} = 'firebase'
     then 'Push Notifications'
