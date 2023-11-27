@@ -1,3 +1,8 @@
+{{ config(
+    materialized='incremental'
+    )
+}}
+
 -- Dimension table for sessions based on the first event that isn't session_start or first_visit.
 with session_first_event as 
 (
@@ -5,6 +10,9 @@ with session_first_event as
     from {{ref('stg_ga4__events')}}
     where event_name != 'first_visit' 
     and event_name != 'session_start'
+    {% if is_incremental()%}
+        and event_date_dt >= CURRENT_DATE() - 7
+    {% endif %}
     qualify row_number() over(partition by session_key order by event_timestamp) = 1
 ),
  session_start_dims as (
