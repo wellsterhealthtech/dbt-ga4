@@ -80,7 +80,7 @@ vars:
     project: "your_gcp_project"
     dataset: "your_ga4_dataset"
     start_date: "YYYYMMDD" # Earliest date to load
-    static_incremental_days: 3 # Number of days to scan and reprocess on each run
+    static_incremental_days: 31 # Number of days to scan and reprocess on each run
 ```
 See [Multi-Property Support](#multi-property-support) section for details on configuring multiple GA4 properties as a source.
 
@@ -301,7 +301,7 @@ Multiple GA4 properties are supported by listing out the project IDs in the `pro
 vars:
   ga4:
     property_ids: [11111111, 22222222, 33333333]
-    static_incremental_days: 3
+    static_incremental_days: 31
     dataset: "my_combined_dataset"
 ```
 
