@@ -49,16 +49,16 @@ detect_gclid as (
     select
         * except (event_source, event_medium, event_campaign),
         case
-            when (page_location like '%gclid%' or page_location like '%gbraid%' or page_location like '%wbraid%' and event_source is null) then "google"
+            when ((page_location like '%gclid%' or page_location like '%gbraid%' or page_location like '%wbraid%') and event_source is null) then "google"
             else event_source
         end as event_source,
         case
-            when (page_location like '%gclid%' or page_location like '%gbraid%' or page_location like '%wbraid%' and event_medium is null) then "cpc"
+            when ((page_location like '%gclid%' or page_location like '%gbraid%' or page_location like '%wbraid%') and event_medium is null) then "cpc"
             else event_medium
         end as event_medium,
         case
-            when (page_location like '%gclid%' or page_location like '%gbraid%' or page_location like '%wbraid%' and event_campaign is null and traffic_source.name is not null) then traffic_source.name 
-            when (page_location like '%gclid%' or page_location like '%gbraid%' or page_location like '%wbraid%' and event_campaign is not null) then event_campaign 
+            when ((page_location like '%gclid%' or page_location like '%gbraid%' or page_location like '%wbraid%') and event_campaign is null and traffic_source.name is not null) then traffic_source.name 
+            when ((page_location like '%gclid%' or page_location like '%gbraid%' or page_location like '%wbraid%') and event_campaign is not null) then event_campaign 
             else "(cpc)"
         end as event_campaign
     from include_event_key
