@@ -57,8 +57,7 @@ detect_gclid as (
             else event_medium
         end as event_medium,
         case
-            when ((page_location like '%gclid%' or page_location like '%gbraid%' or page_location like '%wbraid%') and event_campaign is null and traffic_source.name is not null) then traffic_source.name 
-            when ((page_location like '%gclid%' or page_location like '%gbraid%' or page_location like '%wbraid%') and event_campaign is not null) then event_campaign 
+            when (page_location like '%gclid%' or page_location like '%gbraid%' or page_location like '%wbraid%') then COALESCE(NULLIF(event_campaign, ""), traffic_source.name)
             else "(cpc)"
         end as event_campaign
     from include_event_key
