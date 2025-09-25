@@ -143,9 +143,7 @@ source_intraday as (
     unioned as (
         select *
         from source_daily
-            union all
-        select * 
-        from source_intraday
+        
     ),
     renamed as (
         select 
