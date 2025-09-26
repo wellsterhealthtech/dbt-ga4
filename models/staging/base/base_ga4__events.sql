@@ -80,6 +80,66 @@ with source_daily as (
         and parse_date('%Y%m%d', left(_TABLE_SUFFIX, 8)) in ({{ partitions_to_replace | join(',') }})
     {% endif %}
 ),
+
+source_intraday as (
+        select 
+             
+            
+                parse_date('%Y%m%d',event_date) as event_date_dt,
+                event_timestamp,
+                DATETIME(TIMESTAMP_MICROS(event_timestamp), "Europe/Berlin") as event_timestamp_dt,
+                event_name,
+                event_params,
+                event_previous_timestamp,
+                event_value_in_usd,
+                event_bundle_sequence_id,
+                event_server_timestamp_offset,
+                user_id,
+                user_pseudo_id,
+                privacy_info,
+                user_properties,
+                user_first_touch_timestamp,
+                user_ltv,
+                device,
+                geo,
+                app_info,
+                traffic_source,
+                stream_id,
+                platform,
+                ecommerce,
+
+            (select array_agg(struct(d.item_id AS item_id,
+                                            d.item_name AS item_name,
+                                            d.item_brand AS item_brand,
+                                            d.item_variant AS item_variant,
+                                            d.item_category AS item_category,
+                                            d.item_category2 AS item_category2,
+                                            d.item_category3 AS item_category3,
+                                            d.item_category4 AS item_category4,
+                                            d.item_category5 AS item_category5,
+                                            d.price_in_usd AS price_in_usd,
+                                            d.price AS price,
+                                            d.quantity AS quantity,
+                                            d.item_revenue_in_usd AS item_revenue_in_usd,
+                                            d.item_refund AS item_refund,
+                                            d.coupon AS coupon,
+                                            d.location_id AS location_id,
+                                            d.item_list_id AS item_list_id,
+                                            d.item_list_name AS item_list_name,
+                                            d.promotion_id AS promotion_id,
+                                            d.promotion_name AS promotion_name,
+                                            d.creative_name AS creative_name,
+                                            d.creative_slot AS creative_slot
+                                        )
+                                    )
+                    from unnest(items) d
+                ) as items
+            from {{ source('ga4', 'events_intraday') }}
+            where cast( left(_TABLE_SUFFIX, 8) as int64) >= {{var('start_date')}}
+        {% if is_incremental() %}
+            and parse_date('%Y%m%d', left(_TABLE_SUFFIX, 8)) in ({{ partitions_to_replace | join(',') }})
+        {% endif %}
+    ),
     unioned as (
         select *
         from source_daily
